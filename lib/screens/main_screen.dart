@@ -209,30 +209,22 @@ class DiscoverScreen extends StatelessWidget {
   }
 }
 
+
 class ChallengeScreen extends StatefulWidget {
   @override
   _ChallengeScreenState createState() => _ChallengeScreenState();
 }
 
 class _ChallengeScreenState extends State<ChallengeScreen> {
-  String postTitle = '';
-  String postBody = '';
+  String imageUrl = '';
 
-  Future<void> fetchPost() async {
-    try {
-      final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/posts/1'));
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        setState(() {
-          postTitle = data['title'];
-          postBody = data['body'];
-        });
-      } else {
-        print('Failed to load post: ${response.statusCode}');
-      }
-    } catch (e, stackTrace) {
-      print('Error fetching post: $e');
-      print('Stack trace: $stackTrace');
+  Future<void> fetchCatImage() async {
+    final response = await http.get(Uri.parse('https://api.thecatapi.com/v1/images/search'));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        imageUrl = data[0]['url'];
+      });
     }
   }
 
@@ -248,20 +240,16 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
           children: [
             Text('독서 챌린지 화면', style: TextStyle(fontSize: 24)),
             SizedBox(height: 20),
-            postTitle.isNotEmpty
-                ? Column(
-                    children: [
-                      Text('게시물 제목: $postTitle', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 10),
-                      Text('내용: $postBody', style: TextStyle(fontSize: 16)),
-                    ],
-                  )
-                : Text('버튼을 눌러 게시물을 불러오세요!'),
+            imageUrl.isNotEmpty
+                ? Image.network(imageUrl, height: 200)
+                : Text('고양이 사진을 불러오려면 버튼을 눌러주세요!'),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: fetchPost,
-              child: Text('게시물 불러오기'),
+              onPressed: fetchCatImage,
+              child: Text('귀여운 고양이 보기'),
             ),
+            SizedBox(height: 20),
+            Text('고양이와 함께 독서 챌린지에 도전해보세요!', style: TextStyle(fontSize: 18)),
           ],
         ),
       ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class MainScreen extends StatefulWidget {
   @override
@@ -56,15 +58,121 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-class HomeScreen extends StatelessWidget {
+
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _annualGoal = 0;
+  int _booksRead = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _annualGoal = prefs.getInt('bookGoal') ?? 0;
+      _booksRead = prefs.getInt('booksRead') ?? 0;
+    });
+  }
+
+  double get _progressPercentage {
+    if (_annualGoal == 0) return 0;
+    return _booksRead / _annualGoal;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('홈'),
+        title: Text('홈', style: TextStyle(color: Colors.purple[300])),
+        backgroundColor: Colors.purple[200],
       ),
-      body: Center(
-        child: Text('홈 화면 - 독서 현황 및 대시보드'),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '2024 독서 목표',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20),
+            Container(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(Icons.library_books, size: 32, color: Colors.grey[500]),
+                      ),
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: Text(
+                          "$_annualGoal 권 중 $_booksRead 권을 달성하셨습니다.",
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  LinearProgressIndicator(
+                    value: _progressPercentage,
+                    backgroundColor: Colors.grey[200],
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.purple[300]!),
+                  ),
+                  SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      '${(_progressPercentage * 100).toInt()}%',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                setState(() {
+                  _booksRead++;
+                });
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.setInt('booksRead', _booksRead);
+              },
+              child: Text('책 읽음 기록 하기'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.purple[300],
+                minimumSize: Size(double.infinity, 50), // 버튼의 너비를 최대로, 높이를 50으로 설정
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -2,23 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
 
-
+// 메인 화면을 관리하는 StatefulWidget
 class MainScreen extends StatefulWidget {
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
+// MainScreen의 상태를 관리하는 State 클래스
 class _MainScreenState extends State<MainScreen> {
-  int _currentIndex = 0;
+  int _currentIndex = 0;  // 현재 선택된 탭의 인덱스
 
+  // 각 탭에 해당하는 화면 위젯들
   final List<Widget> _screens = [
     HomeScreen(),
     LibraryScreen(),
     DiscoverScreen(),
     ChallengeScreen(),
   ];
-
+ 
+  // 탭이 탭될 때 호출되는 메서드
   void _onTabTapped(int index) {
     setState(() {
       _currentIndex = index;
@@ -28,11 +33,11 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_currentIndex],
+      body: _screens[_currentIndex],   // 현재 선택된 화면 표시
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,
-        backgroundColor: Colors.purple, // 네비게이션 바의 배경 색상
+        backgroundColor: const Color.fromARGB(221, 35, 8, 40), // 네비게이션 바의 배경 색상
         selectedItemColor: const Color.fromARGB(255, 126, 54, 54), // 선택된 아이템의 색상
         unselectedItemColor: const Color.fromARGB(179, 206, 157, 157), // 선택되지 않은 아이템의 색상
         items: [
@@ -58,22 +63,24 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-
+// 홈 화면을 관리하는 StatefulWidget
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
+// HomeScreen의 상태를 관리하는 State 클래스
 class _HomeScreenState extends State<HomeScreen> {
-  int _annualGoal = 0;
-  int _booksRead = 0;
+  int _annualGoal = 0;  // 연간 독서 목표
+  int _booksRead = 0;  // 읽은 책의 수
 
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _loadData();   // 초기 데이터 로드
   }
 
+   // SharedPreferences에서 데이터를 로드하는 메서드
   Future<void> _loadData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -82,28 +89,46 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  // 독서 진행률을 계산하는 getter
   double get _progressPercentage {
     if (_annualGoal == 0) return 0;
     return _booksRead / _annualGoal;
   }
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('홈', style: TextStyle(color: Colors.purple[300])),
-        backgroundColor: Colors.purple[200],
+        title: Text('당신의 성장을 응원합니다.', style: TextStyle(color: const Color.fromARGB(255, 91, 91, 91))),
+        backgroundColor: const Color.fromARGB(255, 213, 207, 185),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '2024 독서 목표',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/flutter003.png'),
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+              Colors.white.withOpacity(0.1),  // 투명도를 낮춰 이미지를 더 선명하게 표시
+              BlendMode.lighten,
             ),
-            SizedBox(height: 20),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 제목 텍스트
+              Text(
+                '2024 독서 목표',
+                style: TextStyle(
+                  fontSize: 24, 
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,  // 텍스트 색상을 어둡게 하여 가독성 향상
+                ),
+              ),
+              SizedBox(height: 20),
+          // 독서 진행 상황을 보여주는 카드
             Container(
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -120,6 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               child: Column(
                 children: [
+                  // 책 아이콘과 독서 현황 텍스트
                   Row(
                     children: [
                       Container(
@@ -133,19 +159,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(width: 16),
                       Expanded(
                         child: Text(
-                          "$_annualGoal 권 중 $_booksRead 권을 달성하셨습니다.",
+                          "You've read $_booksRead of $_annualGoal books",
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ],
                   ),
                   SizedBox(height: 16),
+                  // 진행률을 보여주는 프로그레스 바
                   LinearProgressIndicator(
                     value: _progressPercentage,
                     backgroundColor: Colors.grey[200],
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.purple[300]!),
                   ),
                   SizedBox(height: 8),
+                  // 진행률 퍼센티지 표시
                   Align(
                     alignment: Alignment.centerRight,
                     child: Text(
@@ -157,21 +185,24 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SizedBox(height: 20),
+            // 책 읽음 기록 버튼
             ElevatedButton(
               onPressed: () async {
                 setState(() {
-                  _booksRead++;
+                  _booksRead++; // 읽은 책 수 증가
                 });
+                // 변경된 읽은 책 수를 저장
                 final prefs = await SharedPreferences.getInstance();
                 await prefs.setInt('booksRead', _booksRead);
               },
-              child: Text('책 읽음 기록 하기'),
+              child: Text('책 읽음 기록'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.purple[300],
                 minimumSize: Size(double.infinity, 50), // 버튼의 너비를 최대로, 높이를 50으로 설정
               ),
             ),
           ],
+          ),
         ),
       ),
     );
@@ -263,36 +294,119 @@ class LibraryScreen extends StatelessWidget {
   }
 }
 
-// 책 정보 화면
-class BookDetailScreen extends StatelessWidget {
+class BookDetailScreen extends StatefulWidget {
   final Book book;
-  BookDetailScreen({required this.book}); // 선택된 책 정보를 받아옴
+  BookDetailScreen({required this.book});
+
+  @override
+  _BookDetailScreenState createState() => _BookDetailScreenState();
+}
+
+class _BookDetailScreenState extends State<BookDetailScreen> {
+  late TextEditingController _noteController;
+  late DateTime _currentDate;
+  
+  @override
+  void initState() {
+    super.initState();
+    _noteController = TextEditingController();
+    _currentDate = DateTime.now();
+    _loadNote();
+  }
+
+  Future<void> _loadNote() async {
+    final prefs = await SharedPreferences.getInstance();
+    final note = prefs.getString('note_${widget.book.title}') ?? '';
+    setState(() {
+      _noteController.text = note;
+    });
+  }
+
+  Future<void> _saveNote() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('note_${widget.book.title}', _noteController.text);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('노트가 저장되었습니다.')),
+    );
+  }
+
+  Future<void> _addImage() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      // 이미지 처리 로직 구현
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('이미지가 추가되었습니다.')),
+      );
+    }
+  }
+
+  void _changeTextStyle() {
+    // 텍스트 스타일 변경 로직 구현
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('텍스트 스타일 변경 기능이 실행되었습니다.')),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFF5E6D3),
       appBar: AppBar(
-        title: Text(book.title), // 책 제목을 화면 제목으로 설정
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.close, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.image, color: Colors.black),
+            onPressed: _addImage,
+          ),
+          IconButton(
+            icon: Icon(Icons.text_fields, color: Colors.black),
+            onPressed: _changeTextStyle,
+          ),
+          IconButton(
+            icon: Icon(Icons.check, color: Colors.purple[300]),
+            onPressed: _saveNote,
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '제목: ${book.title}',
-              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+            ElevatedButton.icon(
+              icon: Icon(Icons.book, size: 18),
+              label: Text('책 속 문장'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.purple[300],
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18.0),
+                ),
+              ),
+              onPressed: () {
+                // 책 속 문장 기능 구현
+              },
             ),
-            SizedBox(height: 16.0),
+            SizedBox(height: 16),
             Text(
-              '저자: ${book.author}',
-              style: TextStyle(fontSize: 18.0),
+              DateFormat('yyyy. M. d. a h:mm').format(_currentDate),
+              style: TextStyle(color: Colors.grey),
             ),
-            SizedBox(height: 16.0),
+            SizedBox(height: 16),
             Expanded(
-              child: Image.asset(
-                'assets/note11.png', // 'note11.png' 이미지 표시
-                fit: BoxFit.contain, // 이미지가 화면에 맞게 조정되도록 변경
+              child: TextField(
+                controller: _noteController,
+                maxLines: null,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: '노트 내용을 입력해보세요.',
+                ),
               ),
             ),
           ],
@@ -300,8 +414,13 @@ class BookDetailScreen extends StatelessWidget {
       ),
     );
   }
-}
 
+  @override
+  void dispose() {
+    _noteController.dispose();
+    super.dispose();
+  }
+}
 
 class DiscoverScreen extends StatelessWidget {
   @override

@@ -3,6 +3,9 @@ import 'screens/book_goal_screen.dart';
 import 'screens/main_screen.dart'; // MainScreen import 추가
 import 'package:shared_preferences/shared_preferences.dart'; // SharedPreferences import 추가
 
+// 디버그 모드 플래그
+const bool isDebugMode = true; // 디버깅 시 true, 실제 사용 시 false
+
 void main() {
   runApp(BookTrackerApp());
 }
@@ -15,20 +18,22 @@ class BookTrackerApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: FutureBuilder<bool>(
-        future: checkFirstRun(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator(); // 로딩 중 표시
-          } else {
-            if (snapshot.data == true) {
-              return BookGoalScreen();
-            } else {
-              return MainScreen();
-            }
-          }
-        },
-      ),
+      home: isDebugMode
+          ? BookGoalScreen() // 디버그 모드일 때는 항상 BookGoalScreen 표시
+          : FutureBuilder<bool>(
+              future: checkFirstRun(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else {
+                  if (snapshot.data == true) {
+                    return BookGoalScreen();
+                  } else {
+                    return MainScreen();
+                  }
+                }
+              },
+            ),
       debugShowCheckedModeBanner: false,
     );
   }

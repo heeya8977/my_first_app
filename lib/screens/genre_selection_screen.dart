@@ -29,45 +29,73 @@ class _GenreSelectionScreenState extends State<GenreSelectionScreen> {
     }
   }
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // AppBar 설정
       appBar: AppBar(
         title: Text('당신의 독서 취향이 궁금해요!'),
+        backgroundColor: const Color.fromARGB(255, 213, 207, 185),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Text(
-              '좋아하는 장르를 마음껏 선택하세요',
-              style: TextStyle(fontSize: 24),
+      // 본문 내용
+      body: Container(
+        // 배경 이미지 설정
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/flutter003.png'),
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+              Colors.white.withOpacity(0.1),
+              BlendMode.lighten,
             ),
-            SizedBox(height: 20),
-            Expanded(
-              child: ListView(
-                children: genres.map((genre) {
-                  return CheckboxListTile(
-                    title: Text(genre),
-                    value: selectedGenres.contains(genre),
-                    onChanged: (bool? value) {
-                      setState(() {
-                        if (value == true) {
-                          selectedGenres.add(genre);
-                        } else {
-                          selectedGenres.remove(genre);
-                        }
-                      });
-                    },
-                  );
-                }).toList(),
+          ),
+        ),
+        // 내용 패딩 설정
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              // 안내 텍스트
+              Text(
+                '좋아하는 장르를 마음껏 선택하세요',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
               ),
-            ),
-            ElevatedButton(
-              onPressed: _navigateToBookRecommendation,
-              child: Text('다음'),
-            ),
-          ],
+              SizedBox(height: 20),
+              // 장르 선택 리스트
+              Expanded(
+                child: ListView(
+                  children: genres.map((genre) {
+                    return Card(
+                      // 카드 배경색 설정
+                      color: Colors.white.withOpacity(0.8),
+                      child: CheckboxListTile(
+                        title: Text(genre),
+                        value: selectedGenres.contains(genre),
+                        onChanged: (bool? value) {
+                          setState(() {
+                            if (value == true) {
+                              selectedGenres.add(genre);
+                            } else {
+                              selectedGenres.remove(genre);
+                            }
+                          });
+                        },
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              // 다음 화면으로 이동하는 버튼
+              ElevatedButton(
+                onPressed: _navigateToBookRecommendation,
+                child: Text('다음'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 222, 225, 184),
+                  minimumSize: Size(double.infinity, 50),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

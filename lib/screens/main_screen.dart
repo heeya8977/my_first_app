@@ -159,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(width: 16),
                       Expanded(
                         child: Text(
-                          "You've read $_booksRead of $_annualGoal books",
+                          " $_annualGoal 권 중에 $_booksRead 권을 읽으셨네요! ",
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -170,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   LinearProgressIndicator(
                     value: _progressPercentage,
                     backgroundColor: Colors.grey[200],
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.purple[300]!),
+                    valueColor: AlwaysStoppedAnimation<Color>(const Color.fromARGB(255, 225, 228, 190)),
                   ),
                   SizedBox(height: 8),
                   // 진행률 퍼센티지 표시
@@ -194,10 +194,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 // 변경된 읽은 책 수를 저장
                 final prefs = await SharedPreferences.getInstance();
                 await prefs.setInt('booksRead', _booksRead);
-              },
+              }, 
               child: Text('책 읽음 기록'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple[300],
+                backgroundColor: Color.fromARGB(255, 232, 230, 181),
                 minimumSize: Size(double.infinity, 50), // 버튼의 너비를 최대로, 높이를 50으로 설정
               ),
             ),

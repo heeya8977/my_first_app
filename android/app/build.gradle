@@ -1,44 +1,61 @@
+// 플러그인 정의
 plugins {
-    id "com.android.application"
-    id "kotlin-android"
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
-    id "dev.flutter.flutter-gradle-plugin"
+    id "com.android.application"  // Android 애플리케이션 빌드를 위한 기본 플러그인
+    id "kotlin-android"  // Kotlin 언어 지원을 위한 플러그인
+    id "dev.flutter.flutter-gradle-plugin"  // Flutter 프로젝트 빌드를 위한 플러그인
+    id "com.google.gms.google-services"  // Firebase 서비스 사용을 위한 Google Services 플러그인
 }
 
+// Android 빌드 설정
 android {
-    namespace = "com.example.my_first_app"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    namespace = "com.example.my_first_app"  // 앱의 패키지 이름
+    compileSdk = flutter.compileSdkVersion  // 컴파일에 사용할 Android SDK 버전
+    ndkVersion = flutter.ndkVersion  // 사용할 NDK 버전
 
+    // Java 컴파일 옵션
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
+    // Kotlin 컴파일 옵션
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8
     }
 
+    // 앱의 기본 설정
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.my_first_app"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        applicationId = "com.example.my_first_app"  // 앱의 고유 식별자
+        minSdk = flutter.minSdkVersion  // 지원하는 최소 Android 버전
+        targetSdk = flutter.targetSdkVersion  // 타겟 Android 버전
+        versionCode = flutter.versionCode  // 앱의 버전 코드
+        versionName = flutter.versionName  // 앱의 버전 이름
+        multiDexEnabled true  // 멀티덱스 지원 활성화 (앱이 65,536개 이상의 메소드를 가질 때 필요)
     }
 
+    // 빌드 타입 설정
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+            // 릴리즈 빌드 설정
+            // TODO: 실제 릴리즈를 위해서는 고유한 서명 설정을 추가해야 함
             signingConfig = signingConfigs.debug
         }
     }
 }
 
+// Flutter 프로젝트 설정
 flutter {
-    source = "../.."
+    source = "../.."  // Flutter 프로젝트의 루트 디렉토리 위치
 }
+
+// 의존성 설정
+dependencies {
+    // Firebase BOM (Bill of Materials) 추가
+    implementation platform('com.google.firebase:firebase-bom:32.7.3')
+    // Firebase 애널리틱스 추가
+    implementation 'com.google.firebase:firebase-analytics'
+}
+
+// Google Services 플러그인 적용
+// 이는 google-services.json 파일을 처리하고 Firebase 설정을 앱에 주입함
+apply plugin: 'com.google.gms.google-services'

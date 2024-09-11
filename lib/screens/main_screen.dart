@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:my_first_app/screens/chat_screen.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -201,13 +202,28 @@ class _HomeScreenState extends State<HomeScreen> {
                 minimumSize: Size(double.infinity, 50), // 버튼의 너비를 최대로, 높이를 50으로 설정
               ),
             ),
-          ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+              // 채팅 화면으로 이동하는 버튼
+            ElevatedButton(
+              onPressed: () {
+                // ChatScreen으로 네비게이션
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ChatScreen()),
+                );
+              },
+              child: Text('채팅 시작하기'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromARGB(255, 232, 230, 181),
+                minimumSize: Size(double.infinity, 50), // 버튼의 너비를 최대로, 높이를 50으로 설정
+             ), // ElevatedButton 스타일 끝
+              ), // ElevatedButton 끝
+            ], // Column의 children 끝
+          ), // Column 끝
+        ), // Padding 끝
+      ), // Container 끝
+    ); // Scaffold 끝
+  } // build 함수 끝
+} // _HomeScreenState 클래스 끝
 
 // 책 정보를 저장하는 데이터 클래스
 class Book {

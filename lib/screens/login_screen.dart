@@ -31,6 +31,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // 디버깅을 위해 자동으로 다음 화면으로 이동
+    /*
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => MainScreen()),
+    );
+  });
+*/
+
     return Scaffold(
       appBar: AppBar(title: Text('로그인')),
       body: Padding(

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "849660590954",
+    "project_id": "myfirstapp-f4222",
+    "storage_bucket": "myfirstapp-f4222.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:849660590954:android:bf86c40054eb7f67de4313",
+        "android_client_info": {
+          "package_name": "com.booknote77.myapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "849660590954-m618aunkf81n87s39c2mj6hd0gpa023h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCogmya543Xdr4OqMBvpAGwGMO_YItcS8o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "849660590954-m618aunkf81n87s39c2mj6hd0gpa023h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

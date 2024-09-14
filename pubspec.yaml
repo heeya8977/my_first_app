@@ -34,12 +34,15 @@ dependencies:
   shared_preferences: ^2.2.2
   intl: ^0.17.0
   image_picker: ^0.8.4+4
-  supabase_flutter: ^1.10.0
+  supabase_flutter: ^2.6.0
   
   # Firebase 패키지
-  firebase_core: ^2.4.0
-  cloud_firestore: ^4.3.0
-  firebase_auth: ^4.2.0
+  firebase_core: ^3.4.1
+  cloud_firestore: ^5.4.1
+  firebase_auth: ^5.2.0
+
+  # app_links 패키지 추가
+  app_links: ^3.5.1
 
 
 

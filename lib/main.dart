@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart'; // 로컬 저장소
 import 'package:supabase_flutter/supabase_flutter.dart'; // Supabase 기능 사용을 위한 패키지
 import 'screens/login_screen.dart'; // 로그인 화면 위젯 import
 import 'package:firebase_core/firebase_core.dart'; // Firebase 초기화를 위한 패키지
+import 'screens/chat_screen.dart';  // 채팅 화면 위젯
+import 'firebase_options.dart'; 
 
 // 디버그 모드 플래그 (true: 디버그 모드, false: 실제 사용 모드)
 const bool isDebugMode = false;
@@ -20,7 +22,9 @@ void main() async {
   );
 
   // Firebase 초기화
-  await Firebase.initializeApp();
+ await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   // 앱 실행
   runApp(const BookTrackerApp());
@@ -73,6 +77,10 @@ class BookTrackerApp extends StatelessWidget {
               }
             },
           ),
+           // 라우트 정의
+      routes: {
+        '/chat': (context) => ChatScreen(),  // 채팅 화면으로 이동하는 라우트
+      },
       debugShowCheckedModeBanner: false, // 디버그 배너 숨기기
     );
   }

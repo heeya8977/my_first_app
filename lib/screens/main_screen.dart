@@ -5,6 +5,10 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:my_first_app/services/chat_service.dart';
+
 
 // 메인 화면을 관리하는 StatefulWidget
 class MainScreen extends StatefulWidget {
@@ -188,35 +192,32 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(height: 20),
             // 책 읽음 기록 버튼
             ElevatedButton(
-              onPressed: () async {
-                setState(() {
-                  _booksRead++; // 읽은 책 수 증가
-                });
-                // 변경된 읽은 책 수를 저장
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.setInt('booksRead', _booksRead);
-              }, 
-              child: Text('책 읽음 기록'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color.fromARGB(255, 232, 230, 181),
-                minimumSize: Size(double.infinity, 50), // 버튼의 너비를 최대로, 높이를 50으로 설정
-              ),
-            ),
-              // 채팅 화면으로 이동하는 버튼
-            ElevatedButton(
-              onPressed: () {
-                // ChatScreen으로 네비게이션
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ChatScreen()),
-                );
-              },
-              child: Text('채팅 시작하기'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color.fromARGB(255, 232, 230, 181),
-                minimumSize: Size(double.infinity, 50), // 버튼의 너비를 최대로, 높이를 50으로 설정
-             ), // ElevatedButton 스타일 끝
-              ), // ElevatedButton 끝
+  onPressed: () async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      // 여기서는 임시로 고정된 상대방 ID를 사용합니다.
+      // 실제 앱에서는 사용자 목록에서 선택하거나 다른 방식으로 상대방 ID를 가져와야 합니다.
+      String otherUserId = 'someOtherUserId';
+      
+      ChatService chatService = ChatService();
+      String chatRoomId = await chatService.createChatRoom(currentUser.uid, otherUserId);
+      
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ChatScreen(chatRoomId: chatRoomId)),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('로그인이 필요합니다.')),
+      );
+    }
+  },
+  child: Text('채팅 시작하기'),
+  style: ElevatedButton.styleFrom(
+    backgroundColor: Color.fromARGB(255, 232, 230, 181),
+    minimumSize: Size(double.infinity, 50),
+  ),
+),
             ], // Column의 children 끝
           ), // Column 끝
         ), // Padding 끝
@@ -497,5 +498,23 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
         ),
       ),
     );
+  }
+}
+class ChatService {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<String> createChatRoom(String userId1, String userId2) async {
+    List<String> ids = [userId1, userId2];
+    ids.sort();
+    String chatRoomId = ids.join('_');
+
+    await _firestore.collection('chat_rooms').doc(chatRoomId).set({
+      'participants': [userId1, userId2],
+      'created_at': FieldValue.serverTimestamp(),
+      'last_message': '',
+      'last_message_time': null,
+    });
+
+    return chatRoomId;
   }
 }

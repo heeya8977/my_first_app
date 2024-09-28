@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -10,18 +10,31 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<void> _signIn() async {
     try {
-      final response = await Supabase.instance.client.auth.signInWithPassword(
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
-      if (response.user != null) {
+      if (userCredential.user != null) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => MainScreen()),
         );
       }
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      if (e.code == 'user-not-found') {
+        errorMessage = '해당 이메일로 등록된 사용자가 없습니다.';
+      } else if (e.code == 'wrong-password') {
+        errorMessage = '잘못된 비밀번호입니다.';
+      } else {
+        errorMessage = '로그인 실패: ${e.message}';
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('로그인 실패: $error')),
@@ -31,15 +44,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // 디버깅을 위해 자동으로 다음 화면으로 이동
-    /*
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => MainScreen()),
-    );
-  });
-*/
-
     return Scaffold(
       appBar: AppBar(title: Text('로그인')),
       body: Padding(

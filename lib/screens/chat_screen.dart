@@ -56,7 +56,7 @@ class _ChatScreenState extends State<ChatScreen> {
           .add({
         'text': _messageController.text, // 메시지 내용
         'timestamp': FieldValue.serverTimestamp(), // 서버 타임스탬프
-        'senderId': _currentUserId, // 현재 사용자 ID
+        'userId': _currentUserId, // 현재 사용자 ID
       });
       _messageController.clear(); // 입력 필드 초기화
     }

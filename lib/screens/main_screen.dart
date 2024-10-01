@@ -197,10 +197,10 @@ class _HomeScreenState extends State<HomeScreen> {
     if (currentUser != null) {
       // 여기서는 임시로 고정된 상대방 ID를 사용합니다.
       // 실제 앱에서는 사용자 목록에서 선택하거나 다른 방식으로 상대방 ID를 가져와야 합니다.
-      String otherUserId = 'someOtherUserId';
+      String otherSenderId = 'someOtherSenderId';
       
       ChatService chatService = ChatService();
-      String chatRoomId = await chatService.createChatRoom(currentUser.uid, otherUserId);
+      String chatRoomId = await chatService.createChatRoom(currentUser.uid, otherSenderId);
       
       Navigator.push(
         context,
@@ -503,13 +503,13 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
 class ChatService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<String> createChatRoom(String userId1, String userId2) async {
-    List<String> ids = [userId1, userId2];
+  Future<String> createChatRoom(String senderId1, String senderId2) async {
+    List<String> ids = [senderId1, senderId2];
     ids.sort();
     String chatRoomId = ids.join('_');
 
     await _firestore.collection('chat_rooms').doc(chatRoomId).set({
-      'participants': [userId1, userId2],
+      'participants': [senderId1, senderId2],
       'created_at': FieldValue.serverTimestamp(),
       'last_message': '',
       'last_message_time': null,

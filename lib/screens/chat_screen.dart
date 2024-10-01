@@ -56,7 +56,7 @@ class _ChatScreenState extends State<ChatScreen> {
           .add({
         'text': _messageController.text, // 메시지 내용
         'timestamp': FieldValue.serverTimestamp(), // 서버 타임스탬프
-        'userId': _currentUserId, // 현재 사용자 ID
+        'senderId': _currentUserId, // 현재 사용자 ID
       });
       _messageController.clear(); // 입력 필드 초기화
     }
@@ -90,11 +90,11 @@ class _ChatScreenState extends State<ChatScreen> {
                   List<Widget> messageWidgets = [];
                   for (var message in messages) {
                     final messageText = message['text'];
-                    final messageSender = message['senderId'];
+                    final messageSenderId = message['senderId'];
                     final messageWidget = MessageBubble(
-                      sender: messageSender,
+                      sender: messageSenderId,
                       text: messageText,
-                      isMe: _currentUserId == messageSender,
+                      isMe: _currentUserId == messageSenderId,
                     );
                     messageWidgets.add(messageWidget);
                   }

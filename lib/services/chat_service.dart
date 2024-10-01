@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class ChatService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<String> createChatRoom(String userId1, String userId2) async {
-  List<String> ids = [userId1, userId2];
+  Future<String> createChatRoom(String senderId1, String senderId2) async {
+  List<String> ids = [senderId1, senderId2];
   ids.sort(); // 정렬하여 항상 같은 순서가 되도록 함
   String chatRoomId = ids.join('_');
 
@@ -13,7 +13,7 @@ class ChatService {
   final chatRoomSnapshot = await chatRoomRef.get();
   if (!chatRoomSnapshot.exists) {
     await chatRoomRef.set({
-      'participants': [userId1, userId2],
+      'participants': [senderId1, senderId2],
       'created_at': FieldValue.serverTimestamp(),
       'last_message': '',
       'last_message_time': null,

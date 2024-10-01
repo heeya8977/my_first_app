@@ -55,7 +55,7 @@ class Message extends StatelessWidget {
             final DateTime timestamp = messageData['timestamp'].toDate();
 
             // 메시지가 현재 사용자의 것인지 확인
-            final isCurrentUser = messageData['userId'] == currentUserId;
+            final isCurrentUser = messageData['senderId'] == currentUserId;
 
             // 메시지를 정렬하고 스타일링하여 반환
             return Align(

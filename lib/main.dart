@@ -56,17 +56,17 @@ class BookTrackerApp extends StatelessWidget {
                 }
               },
             ),
-      onGenerateRoute: (settings) {
-        if (settings.name == '/chat') {
-          final args = settings.arguments as Map<String, dynamic>;
-          return MaterialPageRoute(
-            builder: (context) => ChatScreen(chatRoomId: args['chatRoomId']),
+    onGenerateRoute: (settings) {
+  if (settings.name == '/chat') {
+    final args = settings.arguments as Map<String, dynamic>;
+    return MaterialPageRoute(
+      builder: (context) => ChatScreen(
+        chatRoomId: args['chatRoomId'],       // 기존에 전달하던 chatRoomId
+        currentUserId: args['currentUserId'], // 추가된 currentUserId
+        otherUserId: args['otherUserId'],     // 추가된 otherUserId
+  ),
           );
         }
-        // 다른 라우트 처리
-        return MaterialPageRoute(
-          builder: (context) => LoginScreen(), // 기본 화면을 LoginScreen으로 설정
-        );
       },
       debugShowCheckedModeBanner: false,
     );

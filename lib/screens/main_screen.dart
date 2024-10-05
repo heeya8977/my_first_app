@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:my_first_app/screens/chat_screen.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -8,7 +7,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_first_app/services/chat_service.dart';
-
+import 'package:my_first_app/screens/chat_screen.dart'; 
+import 'package:my_first_app/screens/UserListScreen.dart';
 
 // 메인 화면을 관리하는 StatefulWidget
 class MainScreen extends StatefulWidget {
@@ -18,7 +18,7 @@ class MainScreen extends StatefulWidget {
 
 // MainScreen의 상태를 관리하는 State 클래스
 class _MainScreenState extends State<MainScreen> {
-  int _currentIndex = 0;  // 현재 선택된 탭의 인덱스
+  int _currentIndex = 0; // 현재 선택된 탭의 인덱스
 
   // 각 탭에 해당하는 화면 위젯들
   final List<Widget> _screens = [
@@ -27,7 +27,7 @@ class _MainScreenState extends State<MainScreen> {
     DiscoverScreen(),
     ChallengeScreen(),
   ];
- 
+
   // 탭이 탭될 때 호출되는 메서드
   void _onTabTapped(int index) {
     setState(() {
@@ -38,13 +38,15 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_currentIndex],   // 현재 선택된 화면 표시
+      body: _screens[_currentIndex], // 현재 선택된 화면 표시
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,
         backgroundColor: const Color.fromARGB(221, 35, 8, 40), // 네비게이션 바의 배경 색상
-        selectedItemColor: const Color.fromARGB(255, 126, 54, 54), // 선택된 아이템의 색상
-        unselectedItemColor: const Color.fromARGB(179, 206, 157, 157), // 선택되지 않은 아이템의 색상
+        selectedItemColor:
+            const Color.fromARGB(255, 126, 54, 54), // 선택된 아이템의 색상
+        unselectedItemColor:
+            const Color.fromARGB(179, 206, 157, 157), // 선택되지 않은 아이템의 색상
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -76,16 +78,16 @@ class HomeScreen extends StatefulWidget {
 
 // HomeScreen의 상태를 관리하는 State 클래스
 class _HomeScreenState extends State<HomeScreen> {
-  int _annualGoal = 0;  // 연간 독서 목표
-  int _booksRead = 0;  // 읽은 책의 수
+  int _annualGoal = 0; // 연간 독서 목표
+  int _booksRead = 0; // 읽은 책의 수
 
   @override
   void initState() {
     super.initState();
-    _loadData();   // 초기 데이터 로드
+    _loadData(); // 초기 데이터 로드
   }
 
-   // SharedPreferences에서 데이터를 로드하는 메서드
+  // SharedPreferences에서 데이터를 로드하는 메서드
   Future<void> _loadData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -100,11 +102,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return _booksRead / _annualGoal;
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('당신의 성장을 응원합니다.', style: TextStyle(color: const Color.fromARGB(255, 91, 91, 91))),
+        title: Text('당신의 성장을 응원합니다.',
+            style: TextStyle(color: const Color.fromARGB(255, 91, 91, 91))),
         backgroundColor: const Color.fromARGB(255, 213, 207, 185),
       ),
       body: Container(
@@ -113,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
             image: AssetImage('assets/flutter003.png'),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
-              Colors.white.withOpacity(0.1),  // 투명도를 낮춰 이미지를 더 선명하게 표시
+              Colors.white.withOpacity(0.1), // 투명도를 낮춰 이미지를 더 선명하게 표시
               BlendMode.lighten,
             ),
           ),
@@ -127,97 +130,96 @@ class _HomeScreenState extends State<HomeScreen> {
               Text(
                 '2024 독서 목표',
                 style: TextStyle(
-                  fontSize: 24, 
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,  // 텍스트 색상을 어둡게 하여 가독성 향상
+                  color: Colors.black87, // 텍스트 색상을 어둡게 하여 가독성 향상
                 ),
               ),
               SizedBox(height: 20),
-          // 독서 진행 상황을 보여주는 카드
-            Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 2,
-                    blurRadius: 5,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  // 책 아이콘과 독서 현황 텍스트
-                  Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(Icons.library_books, size: 32, color: Colors.grey[500]),
-                      ),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          " $_annualGoal 권 중에 $_booksRead 권을 읽으셨네요! ",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16),
-                  // 진행률을 보여주는 프로그레스 바
-                  LinearProgressIndicator(
-                    value: _progressPercentage,
-                    backgroundColor: Colors.grey[200],
-                    valueColor: AlwaysStoppedAnimation<Color>(const Color.fromARGB(255, 225, 228, 190)),
-                  ),
-                  SizedBox(height: 8),
-                  // 진행률 퍼센티지 표시
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      '${(_progressPercentage * 100).toInt()}%',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+              // 독서 진행 상황을 보여주는 카드
+              Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    // 책 아이콘과 독서 현황 텍스트
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Icons.library_books,
+                              size: 32, color: Colors.grey[500]),
+                        ),
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            " $_annualGoal 권 중에 $_booksRead 권을 읽으셨네요! ",
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16),
+                    // 진행률을 보여주는 프로그레스 바
+                    LinearProgressIndicator(
+                      value: _progressPercentage,
+                      backgroundColor: Colors.grey[200],
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          const Color.fromARGB(255, 225, 228, 190)),
+                    ),
+                    SizedBox(height: 8),
+                    // 진행률 퍼센티지 표시
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        '${(_progressPercentage * 100).toInt()}%',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 20),
-            // 책 읽음 기록 버튼
-            ElevatedButton(
-  onPressed: () async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      // 여기서는 임시로 고정된 상대방 ID를 사용합니다.
-      // 실제 앱에서는 사용자 목록에서 선택하거나 다른 방식으로 상대방 ID를 가져와야 합니다.
-      String otherSenderId = 'someOtherSenderId';
-      
-      ChatService chatService = ChatService();
-      String chatRoomId = await chatService.createChatRoom(currentUser.uid, otherSenderId);
-      
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ChatScreen(chatRoomId: chatRoomId)),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('로그인이 필요합니다.')),
-      );
-    }
-  },
-  child: Text('채팅 시작하기'),
-  style: ElevatedButton.styleFrom(
-    backgroundColor: Color.fromARGB(255, 232, 230, 181),
-    minimumSize: Size(double.infinity, 50),
-  ),
-),
+              SizedBox(height: 20),
+              // 책 읽음 기록 버튼
+              ElevatedButton(
+                onPressed: () async {
+                  final currentUser = FirebaseAuth.instance.currentUser;
+                  if (currentUser != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            UserListScreen(currentUserId: currentUser.uid),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('로그인이 필요합니다.')),
+                    );
+                  }
+                },
+                child: Text('채팅 시작하기'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color.fromARGB(255, 232, 230, 181),
+                  minimumSize: Size(double.infinity, 50),
+                ),
+              ),
             ], // Column의 children 끝
           ), // Column 끝
         ), // Padding 끝
@@ -286,7 +288,7 @@ class LibraryScreen extends StatelessWidget {
                     ),
                   );
                 },
-                 child: Container(
+                child: Container(
                   decoration: BoxDecoration(
                     color: Colors.transparent, // 완전히 투명한 배경 적용
                   ),
@@ -322,7 +324,7 @@ class BookDetailScreen extends StatefulWidget {
 class _BookDetailScreenState extends State<BookDetailScreen> {
   late TextEditingController _noteController;
   late DateTime _currentDate;
-  
+
   @override
   void initState() {
     super.initState();
@@ -453,7 +455,6 @@ class DiscoverScreen extends StatelessWidget {
   }
 }
 
-
 class ChallengeScreen extends StatefulWidget {
   @override
   _ChallengeScreenState createState() => _ChallengeScreenState();
@@ -463,7 +464,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
   String imageUrl = '';
 
   Future<void> fetchCatImage() async {
-    final response = await http.get(Uri.parse('https://api.thecatapi.com/v1/images/search'));
+    final response =
+        await http.get(Uri.parse('https://api.thecatapi.com/v1/images/search'));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
@@ -500,21 +502,4 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     );
   }
 }
-class ChatService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<String> createChatRoom(String senderId1, String senderId2) async {
-    List<String> ids = [senderId1, senderId2];
-    ids.sort();
-    String chatRoomId = ids.join('_');
-
-    await _firestore.collection('chat_rooms').doc(chatRoomId).set({
-      'participants': [senderId1, senderId2],
-      'created_at': FieldValue.serverTimestamp(),
-      'last_message': '',
-      'last_message_time': null,
-    });
-
-    return chatRoomId;
-  }
-}

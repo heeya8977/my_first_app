@@ -2,12 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+
+
 // 채팅 화면을 위한 StatefulWidget
 class ChatScreen extends StatefulWidget {
-  final String chatRoomId; // 채팅방 ID
+  final String chatRoomId;
+  final String currentUserId;
+  final String otherUserId;
 
-  // 생성자: 채팅방 ID를 필수 매개변수로 받음
-  ChatScreen({required this.chatRoomId});
+ // 생성자: 채팅방 ID를 필수 매개변수로 받음
+  const ChatScreen({
+    Key? key,
+    required this.chatRoomId,
+    required this.currentUserId,
+    required this.otherUserId,
+  }) : super(key: key);
+
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -17,13 +27,13 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   // 메시지 입력을 위한 TextEditingController
   final TextEditingController _messageController = TextEditingController();
-  
+
   // Firestore 인스턴스 생성
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  
+
   // Firebase Auth 인스턴스 생성
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  
+
   // 현재 사용자 UID 저장을 위한 변수
   late String _currentUserId;
 

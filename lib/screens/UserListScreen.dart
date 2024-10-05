@@ -31,7 +31,7 @@ class UserListScreen extends StatelessWidget {
           }
           final users = snapshot.data!.docs; // 가져온 사용자 문서들
           // 현재 사용자를 제외한 다른 사용자들로 목록 필터링
-          final otherUsers = users.where((doc) => doc['uid'] != currentUserId).toList();
+          final otherUsers = users.where((doc) => doc['nxtlPpskMLa1YknDSblqdWnsfMs2'] != currentUserId).toList();
           // 다른 사용자가 없는 경우 메시지 표시
           if (otherUsers.isEmpty) {
             return Center(child: Text('다른 사용자가 없습니다.'));
@@ -54,7 +54,7 @@ class UserListScreen extends StatelessWidget {
                   ChatService chatService = ChatService(); // 채팅 서비스 인스턴스 생성
                   String chatRoomId = await chatService.createChatRoom(
                     currentUserId, // 현재 사용자 ID
-                    userData['uid'], // 선택한 사용자의 ID
+                    userData['nxtlPpskMLa1YknDSblqdWnsfMs2'], // 선택한 사용자의 ID
                   );
                   // 채팅 화면으로 네비게이션
                   Navigator.push(
@@ -63,7 +63,7 @@ class UserListScreen extends StatelessWidget {
                       builder: (context) => ChatScreen(
                         chatRoomId: chatRoomId, // 생성된 채팅방 ID
                         currentUserId: currentUserId, // 현재 사용자 ID
-                        otherUserId: userData['uid'], // 상대방 사용자 ID
+                        otherUserId: userData['nxtlPpskMLa1YknDSblqdWnsfMs2'], // 상대방 사용자 ID
                       ),
                     ),
                   );

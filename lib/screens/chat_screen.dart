@@ -31,28 +31,28 @@ class _ChatScreenState extends State<ChatScreen> {
   // Firestore 인스턴스 생성
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Firebase Auth 인스턴스 생성
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  // Firebase Auth 인스턴스 생성 제거
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // 현재 사용자 UID 저장을 위한 변수
-  late String _currentUserId;
+  // 현재 사용자 UID 저장을 위한 변수 제거
+  // late String _currentUserId;
 
   @override
   void initState() {
     super.initState();
-    _getCurrentUser(); // 현재 사용자 정보 가져오기
+   // _getCurrentUser(); // 현재 사용자 정보 가져오기 제거
   }
 
-  // 현재 로그인된 사용자 정보를 가져오는 메서드
-  void _getCurrentUser() {
-    final user = _auth.currentUser;
-    if (user != null) {
-      _currentUserId = user.uid;
-    } else {
+  // 현재 로그인된 사용자 정보를 가져오는 메서드 제거
+ // void _getCurrentUser() {
+   // final user = _auth.currentUser;
+    //if (user != null) {
+      //_currentUserId = user.uid;
+    //} //else {
       // 사용자가 로그인되어 있지 않은 경우 처리
-      Navigator.of(context).pop(); // 채팅 화면을 닫고 이전 화면으로 돌아감
-    }
-  }
+      //Navigator.of(context).pop(); // 채팅 화면을 닫고 이전 화면으로 돌아감
+    //}
+  //}
 
   // 메시지 전송 함수
   void _sendMessage() async {
@@ -66,7 +66,8 @@ class _ChatScreenState extends State<ChatScreen> {
           .add({
         'text': _messageController.text, // 메시지 내용
         'timestamp': FieldValue.serverTimestamp(), // 서버 타임스탬프
-        'senderId': _currentUserId, // 현재 사용자 ID
+        'senderId': widget.currentUserId, // 현재 사용자 ID 
+        // build 메서드 내에서 _currentUserId 대신 widget.currentUserId 사용
       });
       _messageController.clear(); // 입력 필드 초기화
     }
@@ -104,7 +105,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     final messageWidget = MessageBubble(
                       sender: messageSenderId,
                       text: messageText,
-                      isMe: _currentUserId == messageSenderId,
+                      isMe: widget.currentUserId == messageSenderId,
                     );
                     messageWidgets.add(messageWidget);
                   }

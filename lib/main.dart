@@ -6,8 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'screens/chat_screen.dart';
 import 'firebase_options.dart';
-
-const bool isDebugMode = true;
+import 'screens/book_goal_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,47 +26,7 @@ class BookTrackerApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: isDebugMode
-          ? LoginScreen()
-          : FutureBuilder<bool>(
-              future: checkFirstRun(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else {
-                  if (snapshot.data == true) {
-                    return LoginScreen();
-                  } else {
-                    return FutureBuilder<bool>(
-                      future: checkLoginStatus(),
-                      builder: (context, loginSnapshot) {
-                        if (loginSnapshot.connectionState == ConnectionState.waiting) {
-                          return CircularProgressIndicator();
-                        } else {
-                          if (loginSnapshot.data == true) {
-                            return MainScreen();
-                          } else {
-                            return LoginScreen();
-                          }
-                        }
-                      },
-                    );
-                  }
-                }
-              },
-            ),
-    onGenerateRoute: (settings) {
-  if (settings.name == '/chat') {
-    final args = settings.arguments as Map<String, dynamic>;
-    return MaterialPageRoute(
-      builder: (context) => ChatScreen(
-        chatRoomId: args['chatRoomId'],       // 기존에 전달하던 chatRoomId
-        currentUserId: args['currentUserId'], // 추가된 currentUserId
-        otherUserId: args['otherUserId'],     // 추가된 otherUserId
-  ),
-          );
-        }
-      },
+      home: BookGoalScreen(), // 항상 BookGoalScreen부터 시작하게 설정
       debugShowCheckedModeBanner: false,
     );
   }
@@ -84,4 +43,11 @@ Future<bool> checkFirstRun() async {
 
 Future<bool> checkLoginStatus() async {
   return FirebaseAuth.instance.currentUser != null;
+}
+
+// 여기서 checkBookGoal 함수를 추가합니다.
+Future<bool> checkBookGoal() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  int bookGoal = prefs.getInt('bookGoal') ?? 0;
+  return bookGoal > 0; // 목표가 설정되어 있다면 true 반환
 }

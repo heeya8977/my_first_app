@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'book_recommendation_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class GenreSelectionScreen extends StatefulWidget {
   @override
@@ -14,20 +15,27 @@ class _GenreSelectionScreenState extends State<GenreSelectionScreen> {
   ];
   List<String> selectedGenres = [];
 
-  void _navigateToBookRecommendation() {
-    // 사용자가 장르를 선택했을 때만 다음 화면으로 이동
-    if (selectedGenres.isNotEmpty) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => BookRecommendationScreen()),
-      );
-    } else {
-      // 장르 선택을 유도하는 간단한 알림
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('최소 하나의 장르를 선택해주세요!')),
-      );
-    }
-  }
+  void _navigateToBookRecommendation() async {
+     if (selectedGenres.isNotEmpty) {
+       // Firestore 인스턴스
+       FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+       // Firestore에 선택한 장르 저장 (예시로 'users' 컬렉션 사용)
+       await firestore.collection('users').doc('exampleUserId').set({
+         'selectedGenres': selectedGenres,
+       });
+
+       // 도서 추천 화면으로 이동
+       Navigator.push(
+         context,
+         MaterialPageRoute(builder: (context) => BookRecommendationScreen()),
+       );
+     } else {
+       ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(content: Text('최소 하나의 장르를 선택해주세요!')),
+       );
+     }
+   }
 
    @override
   Widget build(BuildContext context) {

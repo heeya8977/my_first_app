@@ -1,20 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:my_first_app/screens/main_screen.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // BookRecommendationScreen 위젯 정의
 class BookRecommendationScreen extends StatelessWidget {
+  Future<List<Map<String, dynamic>>> fetchBookRecommendations() async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    // 사용자 장르 가져오기
+    DocumentSnapshot userSnapshot =
+        await firestore.collection('users').doc('exampleUserId').get();
+    List<dynamic> selectedGenres = userSnapshot['selectedGenres'] ?? [];
+
+    // 선택한 장르에 맞는 도서 가져오기
+    QuerySnapshot booksSnapshot = await firestore
+        .collection('books')
+        .where('genre', whereIn: selectedGenres)
+        .get();
+
+    return booksSnapshot.docs
+        .map((doc) => doc.data() as Map<String, dynamic>)
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // AppBar 설정
       appBar: AppBar(
         title: Text('당신의 취향에 맞는 책을 선정해봤어요!'),
         backgroundColor: const Color.fromARGB(255, 213, 207, 185),
       ),
-      // 본문 내용
       body: Container(
-        // 배경 이미지 설정
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/flutter003.png'),
@@ -25,60 +41,57 @@ class BookRecommendationScreen extends StatelessWidget {
             ),
           ),
         ),
-        // 내용을 중앙에 배치
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // 안내 메시지
-              Container(
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-    children: [
-      Text(
-        '책 추천 기능은 준비 중입니다.',
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
-      SizedBox(height: 8), // 두 문장 사이에 간격 추가
-      Text(
-        '조금만 기다려주세요!',
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
-    ],
-  ),
-),
-              SizedBox(height: 20),
-              // 책 아이콘
-              Icon(
-                Icons.book,
-                size: 100,
-                color: const Color.fromARGB(255, 241, 245, 196),
-              ),
-              SizedBox(height: 20),
-              // 메인 화면으로 이동하는 버튼
-              ElevatedButton(
-                onPressed: () {
-                  // 모든 이전 화면을 제거하고 메인 화면으로 이동
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => MainScreen()),
-                    (Route<dynamic> route) => false,
-                  );
-                },
-                child: Text('메인 화면으로 이동'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 238, 235, 202),
-                  minimumSize: Size(200, 50),
-                ),
-              ),
-            ],
-          ),
+        child: FutureBuilder<List<Map<String, dynamic>>>(
+          future: fetchBookRecommendations(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('추천 도서를 불러오는 중 오류가 발생했습니다.'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text('추천할 도서를 찾을 수 없습니다.'));
+            } else {
+              List<Map<String, dynamic>> books = snapshot.data!;
+
+              return Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: books.length,
+                      itemBuilder: (context, index) {
+                        final book = books[index];
+                        return Card(
+                          color: Colors.white.withOpacity(0.8),
+                          child: ListTile(
+                            title: Text(book['title'] ?? '제목 없음'),
+                            subtitle: Text(book['author'] ?? '작가 미상'),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // 메인 화면으로 이동하는 버튼
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => MainScreen()),
+                          (route) => false,
+                        );
+                      },
+                      child: Text('메인 화면으로 이동하기'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 222, 225, 184),
+                        minimumSize: Size(double.infinity, 50),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+          },
         ),
       ),
     );

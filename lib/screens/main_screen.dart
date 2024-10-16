@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_first_app/services/chat_service.dart';
 import 'package:my_first_app/screens/chat_screen.dart'; 
 import 'package:my_first_app/screens/UserListScreen.dart';
+import 'DiscoverScreen.dart';
 
 // 메인 화면을 관리하는 StatefulWidget
 class MainScreen extends StatefulWidget {
@@ -441,19 +442,19 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   }
 }
 
-class DiscoverScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Discover'),
-      ),
-      body: Center(
-        child: Text('Discover 화면 - 친구 및 유명인사의 서재 탐방'),
-      ),
-    );
-  }
-}
+//class DiscoverScreen extends StatelessWidget {
+//  @override
+//  Widget build(BuildContext context) {
+//    return Scaffold(
+//      appBar: AppBar(
+//        title: Text('Discover'),
+//      ),
+//      body: Center(
+//        child: Text('Discover 화면 - 친구 및 유명인사의 서재 탐방'),
+//      ),
+//    );
+ // }
+//}
 
 class ChallengeScreen extends StatefulWidget {
   @override

@@ -53,42 +53,42 @@ class BookRecommendationScreen extends StatelessWidget {
             } else {
               List<Map<String, dynamic>> books = snapshot.data!;
 
-              return Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: books.length,
-                      itemBuilder: (context, index) {
-                        final book = books[index];
-                        return Card(
-                          color: Colors.white.withOpacity(0.8),
-                          child: ListTile(
-                            title: Text(book['title'] ?? '제목 없음'),
-                            subtitle: Text(book['author'] ?? '작가 미상'),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // 메인 화면으로 이동하는 버튼
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (context) => MainScreen()),
-                          (route) => false,
-                        );
-                      },
-                      child: Text('메인 화면으로 이동하기'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 222, 225, 184),
-                        minimumSize: Size(double.infinity, 50),
+              return ListView.builder(
+                itemCount: books.length + 1, // 도서 목록 + 버튼을 포함하기 위해 +1
+                itemBuilder: (context, index) {
+                  // 마지막 항목에 "메인 화면으로 이동하기" 버튼 추가
+                  if (index == books.length) {
+                    return Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // 메인 화면으로 이동
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (context) => MainScreen()),
+                            (route) => false,
+                          );
+                        },
+                        child: Text('메인 화면으로 이동하기'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(255, 222, 225, 184),
+                          minimumSize: Size(double.infinity, 50),
+                        ),
                       ),
-                    ),
-                  ),
-                ],
+                    );
+                  } 
+                  // 도서 카드 항목 생성
+                  else {
+                    final book = books[index];
+                    return Card(
+                      color: Colors.white.withOpacity(0.8),
+                      child: ListTile(
+                        title: Text(book['title'] ?? '제목 없음'),
+                        subtitle: Text(book['author'] ?? '작가 미상'),
+                                 ),
+                    );
+                  }
+                },
               );
             }
           },

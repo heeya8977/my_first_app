@@ -59,7 +59,7 @@ class _BookGoalScreenState extends State<BookGoalScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('2024년 독서 목표를 알려주세요!', style: TextStyle(color: const Color.fromARGB(255, 91, 91, 91))),
+        title: Text('당신만의 도서관을 채워갈 시간입니다', style: TextStyle(color: const Color.fromARGB(255, 91, 91, 91))),
         backgroundColor: const Color.fromARGB(255, 213, 207, 185),
       ),
       body: Container(
@@ -75,13 +75,14 @@ class _BookGoalScreenState extends State<BookGoalScreen> {
         ),
         // 내용 패딩 설정
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0, bottom: 16.0), 
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              SizedBox(height: 150), // 여백 공간을 만들기 위해 빈 공간을 추가
               // 목표 설정 안내 텍스트
               Text(
-                '올해 몇 권을 읽을 계획인가요?',
+                '당신의 2025년, \n몇 권의 책과 동행하시겠어요?',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
               ),
               SizedBox(height: 20),

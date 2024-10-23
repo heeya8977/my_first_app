@@ -70,9 +70,12 @@ class _GenreSelectionScreenState extends State<GenreSelectionScreen> {
               ),
               SizedBox(height: 20),
               // 장르 선택 리스트
-              Expanded(
-                child: ListView(
-                  children: genres.map((genre) {
+               Expanded(
+                child: ListView.builder(
+                  physics: BouncingScrollPhysics(), // 스크롤 가능하도록 설정
+                  itemCount: genres.length,
+                  itemBuilder: (context, index) {
+                    final genre = genres[index];
                     return Card(
                       // 카드 배경색 설정
                       color: Colors.white.withOpacity(0.8),
@@ -90,9 +93,10 @@ class _GenreSelectionScreenState extends State<GenreSelectionScreen> {
                         },
                       ),
                     );
-                  }).toList(),
+                  }
+                 )
                 ),
-              ),
+              
               // 다음 화면으로 이동하는 버튼
               ElevatedButton(
                 onPressed: _navigateToBookRecommendation,

@@ -8,7 +8,7 @@ plugins {
 
 // Android 빌드 설정
 android {
-    namespace = "com.example.my_first_app"  // 앱의 패키지 이름
+    namespace = "com.booknote77.myapp"  // 앱의 패키지 이름
     compileSdk = flutter.compileSdkVersion  // 컴파일에 사용할 Android SDK 버전
     ndkVersion = flutter.ndkVersion  // 사용할 NDK 버전
 

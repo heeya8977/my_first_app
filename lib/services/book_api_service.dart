@@ -6,7 +6,7 @@ class BookApiService {
   final String clientSecret = 'xbGq4zxtL_';
 
   Future<List<dynamic>> fetchBooks(String query) async {
-    final response = await http.get(
+    final response = await http.get(  
       Uri.parse('https://openapi.naver.com/v1/search/book.json?query=$query'),
       headers: {
         'X-Naver-Client-Id': clientId,
